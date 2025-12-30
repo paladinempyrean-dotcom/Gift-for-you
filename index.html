@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Daily love messages and compliments for my special someone">
+    <meta name="theme-color" content="#ff6b9d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Love Notes">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons for iOS -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%23ff6b9d' width='192' height='192' rx='15%25'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='130' fill='white'%3E💝%3C/text%3E%3C/svg%3E">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Playfair+Display:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b9d;
+            --secondary: #ffc3d8;
+            --accent: #ff8fab;
+            --dark: #4a1942;
+            --light: #fff5f8;
+            --gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts background */
+        .heart-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float-up 6s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Main container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Welcome card */
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            animation: fadeInScale 1s ease-out;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .welcome-card h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 3.5em;
+            color: var(--dark);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-card .subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 2em;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        /* Feature cards grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.2s; }
+        .feature-card:nth-child(2) { animation-delay: 0.4s; }
+        .feature-card:nth-child(3) { animation-delay: 0.6s; }
+        .feature-card:nth-child(4) { animation-delay: 0.8s; }
+        .feature-card:nth-child(5) { animation-delay: 1s; }
+        .feature-card:nth-child(6) { animation-delay: 1.2s; }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .feature-card h3 {
+            font-size: 1.5em;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeInModal 0.3s ease-out;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fff5f8 0%, #ffc3d8 100%);
+            border-radius: 30px;
+            padding: 50px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.9);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            border: 2px solid var(--primary);
+            color: var(--dark);
+        }
+
+        .close-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-content h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.5em;
+            color: var(--dark);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Love letter styling */
+        .letter-content {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8em;
+            line-height: 1.8;
+            color: var(--dark);
+            text-align: left;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Compliment display */
+        .compliment-display {
+            font-size: 2em;
+            color: var(--dark);
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            font-family: 'Caveat', cursive;
+            margin-bottom: 20px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Playfair Display', serif;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 157, 0.5);
+        }
+
+        /* Calendar and notification styles */
+        .calendar-info {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, var(--secondary), var(--light));
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-card.enabled {
+            background: linear-gradient(135deg, #90EE90, #98FB98);
+        }
+
+        .calendar-grid {
+            margin-top: 20px;
+        }
+
+        #calendarDays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-day {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .calendar-day:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .calendar-day.today {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.past {
+            background: var(--light);
+        }
+
+        .day-number {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .day-emoji {
+            font-size: 1.5em;
+        }
+
+        .message-history-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 10px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .message-history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.2);
+        }
+
+        .message-date {
+            font-family: 'Caveat', cursive;
+            font-size: 1.1em;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .message-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.5em;
+            color: var(--dark);
+        }
+
+        /* Music player */
+        .music-player {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .music-note {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .playlist-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-family: 'Caveat', cursive;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .playlist-item:hover {
+            background: var(--secondary);
+            transform: translateX(10px);
+        }
+
+        /* Countdown timer */
+        .countdown {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .countdown-item {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-number {
+            font-size: 3em;
+            color: var(--primary);
+            font-weight: bold;
+            font-family: 'DM Serif Display', serif;
+        }
+
+        .countdown-label {
+            font-size: 1em;
+            color: var(--dark);
+            margin-top: 10px;
+        }
+
+        /* Wish generator */
+        .wish-display {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            font-size: 1.8em;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-card h1 {
+                font-size: 2.5em;
+            }
+            .modal-content {
+                padding: 30px 20px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="heart-bg" id="heartBg"></div>
+
+    <div class="container">
+        <!-- Welcome card -->
+        <div class="welcome-card">
+            <h1>💝 For My Love 💝</h1>
+            <p class="subtitle">A little something to make you smile</p>
+            <p style="color: #666; font-size: 1.1em; max-width: 600px; margin: 0 auto;">
+                I created this special gift just for you. Click on any card below to discover sweet surprises, 
+                memories, and all the reasons why you're so amazing! ✨
+            </p>
+            
+            <!-- PWA Install Button -->
+            <div id="installContainer" style="margin-top: 25px; display: none;">
+                <button id="installButton" class="btn" style="background: linear-gradient(135deg, #667eea, #764ba2); display: inline-flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.3em;">📱</span>
+                    Install App for Daily Notifications
+                </button>
+                <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
+                    Install to get better daily reminders at 6 AM! 💕
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature cards -->
+        <div class="features-grid">
+            <div class="feature-card" onclick="openModal('loveLetter')">
+                <span class="feature-icon">💌</span>
+                <h3>Love Letter</h3>
+                <p>A heartfelt message just for you baby janeee🥰</p>
+            </div>
+
+            <div class="feature-card" onclick="openModal('calendar')">
+                <span class="feature-icon">📅</span>
+                <h3>Daily Love Calendar</h3>
+                <p>Your daily dose of love at 6 AM</p>
+            </div>
+
+            <div class="feature-card" onclick="openModal('compliments')">
+                <span class="feature-icon">🌟</span>
+                <h3>Instant Compliments</h3>
+                <p>Get a sweet compliment anytime</p>
+            </div>
+
+            <div class="feature-card" onclick="openModal('reasons')">
+                <span class="feature-icon">💖</span>
+                <h3>Reasons I Love You</h3>
+                <p>An endless list of reasons</p>
+            </div>
+
+            <div class="feature-card" onclick="openModal('wishes')">
+                <span class="feature-icon">🌠</span>
+                <h3>Future Wishes</h3>
+                <p>Dreams I have for us</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+        color: white;
+        text-align: center;
+        padding: 40px 20px;
+        margin-top: 60px;
+        border-radius: 30px 30px 0 0;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+    ">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <p style="font-family: 'DM Serif Display', serif; font-size: 1.8em; margin-bottom: 15px;">
+                Made with Love 💝
+            </p>
+            <p style="font-family: 'Caveat', cursive; font-size: 1.5em; margin-bottom: 20px; line-height: 1.6;">
+                Every line of code written with you in mind.<br>
+                You deserve all the love in the world babygirl. ✨
+            </p>
+            <div style="margin: 20px 0; font-size: 2em;">
+                💕 💖 💗 💓 💝
+            </div>
+            <p style="font-family: 'Playfair Display', serif; font-size: 1em; opacity: 0.9; margin-top: 20px;">
+                © 2026 | Forever Yours
+            </p>
+            <p style="font-family: 'Caveat', cursive; font-size: 1.2em; margin-top: 10px; opacity: 0.8;">
+                "In a world full of temporary things, you are my forever and my everything" 🌟
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="loveLetter" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('loveLetter')">×</span>
+            <h2>💌 My Love Letter to You</h2>
+            <div class="letter-content">
+                <p>My prettiest girl,</p>
+                <p>Every day with you feels like a beautiful dream I never want to wake up from. Your smile lights up my world in ways I never knew were possible.</p>
+                <p>I created this little gift for you and to remind you of how incredibly special you are to me mygirl You make everything better just by being you. thankyou for making my requests even how hard it is😏😏, thankyou for being there always mylove.</p>
+                <p>Thank you for being my partner, my best friend, my wife and my greatest adventure. I love you more than words can express, iloveeeyouuuuuuuu more than everything and i promise to love you more.</p>
+                <p>Forever yours,<br>Your Guil>< ❤️</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('calendar')">×</span>
+            <h2>📅 Your Daily Love Calendar</h2>
+            
+            <div class="calendar-info">
+                <div style="background: white; padding: 30px; border-radius: 20px; margin-bottom: 20px;">
+                    <h3 style="color: var(--dark); margin-bottom: 15px; font-size: 1.5em;">💝 Daily Love Reminder</h3>
+                    <p style="font-family: 'Caveat', cursive; font-size: 1.5em; color: var(--dark); line-height: 1.6;">
+                        Every morning at <strong>6:00 AM (Philippines Time)</strong>, 
+                        I'll send you a special compliment to start your day with love my wife deserves compliments everyday☀️
+                    </p>
+                </div>
+
+                <div class="notification-status" id="notificationStatus">
+                    <div class="status-card">
+                        <span style="font-size: 3em;">🔔</span>
+                        <p style="margin: 15px 0; font-size: 1.2em;">Enable notifications to receive your daily love message!</p>
+                        <button class="btn" onclick="enableNotifications()">Enable Daily Reminders 💕</button>
+                    </div>
+                </div>
+
+                <div class="todays-message" style="margin-top: 30px;">
+                    <h3 style="color: var(--dark); text-align: center; margin-bottom: 20px; font-size: 1.8em;">Today's Message for You:</h3>
+                    <div class="compliment-display" id="todaysCompliment">
+                        Loading your daily message...
+                    </div>
+                </div>
+
+                <div class="calendar-grid">
+                    <h3 style="color: var(--dark); text-align: center; margin: 30px 0 20px 0; font-size: 1.8em;">📆 This Month's Love Calendar</h3>
+                    <div id="calendarDays"></div>
+                </div>
+
+                <div class="past-messages" style="margin-top: 30px;">
+                    <h3 style="color: var(--dark); text-align: center; margin-bottom: 20px; font-size: 1.8em;">💌 Recent Messages</h3>
+                    <div id="messageHistory"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="compliments" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('compliments')">×</span>
+            <h2>🌟 You Are Amazing!</h2>
+            <div class="compliment-display" id="complimentText">
+                Click the button to receive a compliment!
+            </div>
+            <div style="text-align: center;">
+                <button class="btn" onclick="generateCompliment()">Give Me Another! 💕</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reasons" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('reasons')">×</span>
+            <h2>💖 Why I Love You</h2>
+            <div class="compliment-display" id="reasonText">
+                Let me count the ways...
+            </div>
+            <div style="text-align: center;">
+                <button class="btn" onclick="generateReason()">Tell Me More! 💕</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="wishes" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('wishes')">×</span>
+            <h2>🌠 Our Future Together</h2>
+            <div class="wish-display" id="wishText">
+                Click below to see my wishes for us...
+            </div>
+            <div style="text-align: center;">
+                <button class="btn" onclick="generateWish()">Another Wish ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PWA Installation and Service Worker Registration
+        let deferredPrompt;
+        let swRegistration;
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration);
+                        swRegistration = registration;
+                        
+                        // Request periodic background sync for daily notifications
+                        if ('periodicSync' in registration) {
+                            registration.periodicSync.register('daily-love-check', {
+                                minInterval: 60 * 60 * 1000 // Check every hour
+                            }).catch(err => console.log('Periodic sync registration failed:', err));
+                        }
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // PWA Install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button
+            document.getElementById('installContainer').style.display = 'block';
+        });
+
+        // Handle install button click
+        document.addEventListener('DOMContentLoaded', () => {
+            const installButton = document.getElementById('installButton');
+            if (installButton) {
+                installButton.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        
+                        if (outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                            document.getElementById('installContainer').style.display = 'none';
+                        }
+                        
+                        deferredPrompt = null;
+                    }
+                });
+            }
+        });
+
+        // Handle app installed event
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            document.getElementById('installContainer').style.display = 'none';
+            
+            // Show success message
+            alert('App installed successfully! 💝 You can now receive daily love messages even when the browser is closed!');
+        });
+
+        // Floating hearts animation
+        function createFloatingHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.textContent = ['❤️', '💕', '💖', '💗', '💝'][Math.floor(Math.random() * 5)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            document.getElementById('heartBg').appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+        }
+
+        setInterval(createFloatingHeart, 800);
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            
+            if (modalId === 'calendar') {
+                createCalendar();
+                loadMessageHistory();
+                updateNotificationStatus();
+                
+                // Display today's compliment
+                document.getElementById('todaysCompliment').textContent = getTodaysCompliment();
+                
+                // Auto-enable if previously enabled
+                if (Notification && Notification.permission === 'granted') {
+                    notificationsEnabled = true;
+                    scheduleDailyNotification();
+                }
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Click outside to close
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Expanded compliments generator (365+ compliments for every day!)
+        const compliments = [
+            "Your smile makes my entire day brighter! ☀️",
+            "You're the most beautiful person inside and out! 🌸",
+            "Your laugh is my favorite sound in the world! 🎵",
+            "You make everything better just by being you! ✨",
+            "I fall in love with you more every single day! 💕",
+            "Your kindness touches everyone around you! 🌟",
+            "You're my favorite person to talk to! 💬",
+            "Your intelligence and wit never cease to amaze me! 🧠",
+            "You have the biggest, most beautiful heart! 💖",
+            "I'm so lucky to have you in my life! 🍀",
+            "You're my best friend and my greatest love! 👫",
+            "Your strength inspires me every day! 💪",
+            "You make me want to be a better person! 🌈",
+            "Your eyes are absolutely mesmerizing! 👀",
+            "You're the perfect partner in every way! 💑",
+            "Good morning beautiful! You're the first thing I think about every day! 🌅",
+            "Your voice is like music to my ears! 🎶",
+            "I love how you light up when you talk about your passions! 🔥",
+            "Your hugs feel like home to me! 🏡",
+            "You have an amazing way of making everyone feel special! ⭐",
+            "I admire your courage and determination! 💪",
+            "Your sense of humor brightens even the gloomiest days! 😄",
+            "You're incredibly talented and I'm so proud of you! 🎨",
+            "The way you care for others is truly beautiful! 💝",
+            "I love your quirky little habits - they're adorable! 🥰",
+            "You make ordinary moments feel magical! ✨",
+            "Your creativity never stops amazing me! 🎭",
+            "I love how passionate you are about everything you do! 🔥",
+            "You're the most genuine person I know! 💎",
+            "Your positivity is contagious! 😊",
+            "I love how you see the beauty in everything! 👁️",
+            "You make me feel safe and loved! 🛡️",
+            "Your compassion for others is inspiring! 💗",
+            "I love your adventurous spirit! 🗺️",
+            "You have the most beautiful soul! 🌟",
+            "Your dedication to your goals is admirable! 🎯",
+            "I love how you always know how to cheer me up! 🎈",
+            "You're my sunshine on cloudy days! ☀️",
+            "Your confidence is incredibly attractive! 💫",
+            "I love your infectious enthusiasm! 🎉",
+            "You make me believe in magic! ✨",
+            "Your wisdom never ceases to amaze me! 📚",
+            "I love how thoughtful you are! 💭",
+            "You're incredibly strong, even when you don't feel like it! 💪",
+            "Your grace under pressure is remarkable! 🦢",
+            "I love your unique perspective on life! 🌍",
+            "You're absolutely radiant today! ✨",
+            "Your empathy makes the world a better place! 🌎",
+            "I love how you chase your dreams! 🌠",
+            "You're my favorite person in the entire universe! 🌌",
+            "Your loyalty means everything to me! 💖",
+            "I love how honest and authentic you are! 💯",
+            "You have an incredible work ethic! 📈",
+            "Your style is absolutely on point! 👗",
+            "I love your spontaneous side! 🎲",
+            "You make every day an adventure! 🚀",
+            "Your cooking is absolutely delicious! 🍳",
+            "I love how you always push me to be better! 📊",
+            "You're my biggest inspiration! 💡",
+            "Your love language speaks directly to my heart! 💓",
+            "I love how you remember the little things! 🎁",
+            "You have the most beautiful energy! ⚡",
+            "Your optimism is refreshing! 🌈",
+            "I love your silly side! 🤪",
+            "You make me laugh until my stomach hurts! 😂",
+            "Your support means the world to me! 🌍",
+            "I love how you dance like nobody's watching! 💃",
+            "You're incredibly photogenic! 📸",
+            "Your kindness to animals melts my heart! 🐾",
+            "I love your love for learning new things! 📖",
+            "You're my favorite adventure partner! 🏔️",
+            "Your patience is incredible! ⏳",
+            "I love how you stand up for what's right! ⚖️",
+            "You're absolutely glowing today! ✨",
+            "Your friendship means everything to me! 🤝",
+            "I love your morning cuddles! 🛌",
+            "You have the warmest embrace! 🤗",
+            "Your dreams inspire me! 💭",
+            "I love how you make me feel understood! 👂",
+            "You're my safe space! 🏠",
+            "Your laughter is contagious! 😄",
+            "I love your bedhead in the morning! 😴",
+            "You're incredibly resilient! 🌳",
+            "Your curiosity about the world is adorable! 🔍",
+            "I love how you sing in the shower! 🚿",
+            "You make mundane tasks fun! 🎪",
+            "Your texting style always makes me smile! 📱",
+            "I love your random facts and trivia! 🧠",
+            "You're my favorite notification! 📲",
+            "Your sleepy voice is so cute! 😴",
+            "I love how you get excited about little things! 🎉",
+            "You're the best cuddler ever! 🧸",
+            "Your midnight snack choices are perfect! 🍕",
+            "I love your bedtime stories! 📚",
+            "You make Netflix binges so much better! 📺",
+            "Your playlist is fire! 🎵",
+            "I love how you steal my hoodies! 👕",
+            "You're incredibly understanding! 💙",
+            "Your road trip singing is legendary! 🚗",
+            "I love your coffee order - it's so you! ☕",
+            "You give the best advice! 💡",
+            "Your random acts of kindness are beautiful! 🌸",
+            "I love how you make friends everywhere! 👥",
+            "You're my favorite shopping partner! 🛍️",
+            "Your Instagram stories brighten my day! 📱",
+            "I love your guilty pleasure TV shows! 📺",
+            "You're the best gift wrapper! 🎁",
+            "Your dance moves in the kitchen are iconic! 💃",
+            "I love your late-night philosophical talks! 🌙",
+            "You make the best breakfast! 🥞",
+            "Your selfie game is strong! 🤳",
+            "I love how you organize everything! 📋",
+            "You're incredibly generous! 🎁",
+            "Your DIY projects are impressive! 🔨",
+            "I love your plant parent skills! 🌱",
+            "You're my favorite study buddy! 📚",
+            "Your movie recommendations are always spot on! 🎬",
+            "I love your cozy sweater collection! 🧶",
+            "You make the best comfort food! 🍜",
+            "Your book recommendations are gold! 📖",
+            "I love how you remember my favorite things! 💝",
+            "You're the best travel companion! ✈️",
+            "Your skincare routine is goals! 💆",
+            "I love your Sunday morning vibes! ☕",
+            "You give the warmest hugs! 🤗",
+            "Your playlist curation skills are unmatched! 🎧",
+            "I love your handwritten notes! ✍️",
+            "You're incredibly photogenic without trying! 📷",
+            "Your cooking experiments are always interesting! 👨‍🍳",
+            "I love your lazy Sunday energy! 😌",
+            "You make grocery shopping fun! 🛒",
+            "Your fashion sense is impeccable! 👔",
+            "I love your random dance parties! 🎉",
+            "You're the best listener! 👂",
+            "Your positivity lifts everyone up! ⬆️",
+            "I love your bedtime routine! 🌙",
+            "You make the best playlists for every mood! 🎵",
+            "Your pep talks are legendary! 💪",
+            "I love how you decorate spaces! 🖼️",
+            "You're incredibly thoughtful with gifts! 🎁",
+            "Your baking skills are amazing! 🧁",
+            "I love your cozy aesthetic! 🕯️",
+            "You make every season special! 🍂",
+            "Your holiday spirit is infectious! 🎄",
+            "I love your random compliments! 💬",
+            "You're the best at making plans! 📅",
+            "Your gaming skills impress me! 🎮",
+            "I love your artistic eye! 🎨",
+            "You make the best memories! 📸",
+            "Your jokes always land! 😂",
+            "I love your problem-solving skills! 🧩",
+            "You're incredibly creative! 💡",
+            "Your determination is admirable! 🏆",
+            "I love your morning routine! ☀️",
+            "You make everything more fun! 🎪",
+            "Your energy is magnetic! 🧲",
+            "I love your late-night conversations! 🌜",
+            "You're the best secret keeper! 🤐",
+            "Your recommendations never disappoint! ⭐",
+            "I love your random talents! 🎭",
+            "You make me feel so loved! 💕",
+            "Your presence is calming! 🧘",
+            "I love your unique style! 👗",
+            "You're incredibly supportive! 📣",
+            "Your laugh lines are beautiful! 😊",
+            "I love how you make decisions! 🤔",
+            "You're my favorite person to do nothing with! 🛋️",
+            "Your intuition is spot on! 🔮",
+            "I love your morning texts! 📱",
+            "You make every moment count! ⏰",
+            "Your ambition inspires me! 🚀",
+            "I love your random facts about yourself! 📝",
+            "You're the best at cheering people up! 🎈",
+            "Your confidence boosts mine! 💪",
+            "I love your weird food combinations! 🍽️",
+            "You make me feel safe to be myself! 🦋",
+            "Your dedication to self-improvement is inspiring! 📈",
+            "I love your morning grumpiness - it's cute! 😤",
+            "You're incredibly resourceful! 🔧",
+            "Your spontaneity keeps life exciting! 🎢",
+            "I love how you handle stress with grace! 😌",
+            "You make me believe in us! 💑",
+            "Your growth mindset is admirable! 🌱",
+            "I love your comfort in silence! 🤫",
+            "You're my favorite notification sound! 🔔",
+            "Your vulnerability is beautiful! 💖",
+            "I love how you celebrate small wins! 🎊",
+            "You make me want to be more present! 🎁",
+            "Your attention to detail is impressive! 🔍",
+            "I love your random acts of romance! 🌹",
+            "You're the best at making me feel special! ⭐",
+            "Your ability to forgive inspires me! 🕊️",
+            "I love your excitement for new experiences! 🎢",
+            "You make me feel like the luckiest person! 🍀",
+            "Your emotional intelligence is remarkable! 🧠",
+            "I love how you communicate! 💬",
+            "You're incredibly self-aware! 🪞",
+            "Your gentle nature is refreshing! 🌿",
+            "I love your competitive spirit! 🏅",
+            "You make me feel heard! 👂",
+            "Your openness to growth is beautiful! 🌱",
+            "I love your midnight snack runs! 🌙",
+            "You're my favorite person to grow with! 🌳",
+            "Your love is my greatest blessing! 🙏",
+            "I love how you challenge me! 💪",
+            "You make life sweeter! 🍯",
+            "Your authenticity is magnetic! 🧲",
+            "I love your random dancing! 💃",
+            "You're my calm in the storm! 🌊",
+            "Your playfulness keeps me young! 🎈",
+            "I love how you love me! 💝",
+            "You make everything better! ✨",
+            "Your presence is my present! 🎁"
+        ];
+
+        function generateCompliment() {
+            const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
+            document.getElementById('complimentText').textContent = randomCompliment;
+        }
+
+        // Expanded reasons generator
+        const reasons = [
+            "You make me laugh even on my worst days 😊",
+            "You make my request even it hurts you😏😏",
+            "You're always there in my hardest times🥰🥰",
+            "You're my light on my darkest days 🥹🥹❤️",
+            "You're my everything ",
+            "The way you care about others is incredible 💝",
+            "You understand me like no one else does 🫂",
+            "Your passion for life is contagious ✨",
+            "You make ordinary moments extraordinary 🌟",
+            "Your support means everything to me 🤗",
+            "You're always there when I need you 🫶",
+            "The way you see the world inspires me 🌍",
+            "You make me feel safe and loved 🏠",
+            "Your quirks and habits are adorable 🥰",
+            "You challenge me to grow and be better 🌱",
+            "Your dreams and ambitions are beautiful 🎯",
+            "The way you love is pure and true 💖",
+            "You're my comfort and my adventure 🗺️",
+            "Every moment with you is a treasure 💎",
+            "You make me feel like I can do anything 🦸",
+            "Your loyalty and commitment amaze me 💪",
+            "You bring out the best version of me 🌟",
+            "The way you listen makes me feel valued 👂",
+            "You accept me completely, flaws and all 💕",
+            "Your smile lights up my entire world ☀️",
+            "You make me excited about our future 🔮",
+            "The way you handle challenges inspires me 🏔️",
+            "You're my partner in crime and in life 👫",
+            "Your presence alone calms my anxiety 🧘",
+            "You celebrate my wins like they're your own 🎉",
+            "The way you touch me gives me butterflies 🦋",
+            "You make me believe in true love 💑",
+            "Your cooking warms my heart and stomach 🍳",
+            "You know exactly what to say when I'm down 💬",
+            "The way you dance makes me smile 💃",
+            "You push me outside my comfort zone 🚀",
+            "Your random texts brighten my day 📱",
+            "You make me want to plan forever 💍",
+            "The way you care for your loved ones 👨‍👩‍👧",
+            "You're beautiful even when you think you're not 🌸",
+            "Your morning voice is absolutely adorable 🌅",
+            "You make me feel like the luckiest person alive 🍀",
+            "The way you remember little details about me 💭",
+            "You're my biggest cheerleader 📣",
+            "Your creativity never stops amazing me 🎨",
+            "You make me want to write love songs 🎵",
+            "The way you hold my hand feels like home 🤝",
+            "You're patient with me when I'm difficult 😌",
+            "Your late-night talks are my favorite 🌙",
+            "You make me believe in soulmates 👼",
+            "The way you look at me melts my heart 👀",
+            "You're my favorite person to do nothing with 🛋️",
+            "Your determination to succeed inspires me 🎯",
+            "You make me want to be more romantic 🌹",
+            "The way you cuddle is perfection 🧸",
+            "You're honest with me even when it's hard 💯",
+            "Your sacrifices for us don't go unnoticed 🙏",
+            "You make me excited to wake up every day ☀️",
+            "The way you support my dreams means everything 🌠",
+            "You're my best friend first 🤝",
+            "Your sense of humor matches mine perfectly 😂",
+            "You make me feel sexy and wanted 🔥",
+            "The way you forgive my mistakes is beautiful 🕊️",
+            "You're my safe place in this chaotic world 🏡",
+            "Your ambition for life motivates me 📈",
+            "You make me want to build a future 🏗️",
+            "The way you kiss me takes my breath away 💋",
+            "You're comfortable with my weird side 🤪",
+            "Your strength in tough times is admirable 💪",
+            "You make me believe anything is possible ✨",
+            "The way you smell drives me crazy 😍",
+            "You're thoughtful in ways that matter 💝",
+            "Your vulnerability makes us closer 💗",
+            "You make me want to take more photos 📸",
+            "The way you plan surprises is so sweet 🎁",
+            "You're my favorite travel companion ✈️",
+            "Your trust in me makes me better 🤝",
+            "You make me want to learn your love language 💕",
+            "The way you defend me means the world 🛡️",
+            "You're patient with my growth process 🌱",
+            "Your excitement for little things is contagious 🎊",
+            "You make me want to write poetry 📝",
+            "The way you compromise shows maturity 🤝",
+            "You're my motivation to work harder 💼",
+            "Your faith in us is unwavering 🙌",
+            "You make me want to be more affectionate 💏",
+            "The way you handle my family is amazing 👪",
+            "You're open to trying new things together 🎢",
+            "Your morning kisses are my favorite alarm ⏰",
+            "You make me want to plan more dates 📅",
+            "The way you communicate is refreshing 💬",
+            "You're my favorite person to share silence with 🤫",
+            "Your positivity is infectious 😊",
+            "You make me want to learn more about you 🔍",
+            "The way you respect my space is important 🚪",
+            "You're my inspiration for love songs 🎶",
+            "Your willingness to work on us matters 🔧",
+            "You make me believe in partnership 🤝",
+            "The way you appreciate small gestures 💐",
+            "You're my favorite person to grow old with 👴👵"
+        ];
+
+        function generateReason() {
+            const randomReason = reasons[Math.floor(Math.random() * reasons.length)];
+            document.getElementById('reasonText').textContent = randomReason;
+        }
+
+        // Expanded wishes generator
+        const wishes = [
+            "I can't wait to travel the world with you! 🌎✈️",
+            "I want to have 13 babies",
+            "I dream of lazy Sunday mornings together forever ☕🌅",
+            "Let's make a million more beautiful memories together 📸💕",
+            "I hope to always make you as happy as you make me 😊💖",
+            "I want to be there for every milestone in your life 🎊",
+            "Let's grow old together and never stop laughing 👴👵",
+            "I wish to build our dream home filled with love 🏡",
+            "May we always find new adventures together 🗺️",
+            "I hope our love continues to grow stronger each day 💪💕",
+            "Let's create traditions that are uniquely ours 🎄",
+            "I dream of dancing with you at our wedding 💃🕺",
+            "May we always be each other's safe haven 🏠",
+            "I want to support all your dreams and goals 🎯",
+            "Let's make every day feel like magic ✨",
+            "I wish for endless years of us against the world 🌍❤️",
+            "I hope to wake up next to you every morning 🌅",
+            "Let's build a life full of laughter and joy 😄",
+            "I dream of our future family together 👨‍👩‍👧‍👦",
+            "May we never stop surprising each other 🎁",
+            "I want to celebrate every anniversary with you 🎉",
+            "Let's explore every corner of the world together 🧳",
+            "I hope to make you feel loved every single day 💝",
+            "May our love story inspire others 📖",
+            "I dream of retiring together by the beach 🏖️",
+            "Let's create a photo album full of us 📷",
+            "I want to learn something new with you every year 📚",
+            "May we always find reasons to celebrate 🎊",
+            "I hope to hold your hand through everything 🤝",
+            "Let's make a bucket list and check it all off ✅",
+            "I dream of cooking meals together in our kitchen 👨‍🍳",
+            "May we always choose each other 💑",
+            "I want to write our love story together 📝",
+            "Let's build a library of shared experiences 📚",
+            "I hope to make you smile every day 😊",
+            "May our adventures never end 🎢",
+            "I dream of stargazing with you forever 🌟",
+            "Let's create a garden we can grow old in 🌻",
+            "I want to be your biggest supporter always 📣",
+            "May we never lose our sense of wonder ✨",
+            "I hope to dance in our kitchen at 80 💃",
+            "Let's make inside jokes that last forever 😂",
+            "I dream of road trips with no destination 🚗",
+            "May we always communicate with love 💬",
+            "I want to celebrate your wins like my own 🏆",
+            "Let's build a playlist of our life together 🎵",
+            "I hope to always be your safe place 🏡",
+            "May we create art together, whatever form it takes 🎨",
+            "I dream of lazy rainy day cuddles forever ☔",
+            "Let's make every holiday special together 🎄",
+            "I want to grow wiser with you by my side 🧠",
+            "May we always find humor in life 😄",
+            "I hope to learn your love language fluently 💕",
+            "Let's make a tradition of breakfast in bed 🥞",
+            "I dream of building a life you're proud of 🏗️",
+            "May we always be teammates 🤝",
+            "I want to experience every season with you 🍂",
+            "Let's create a home that feels like us 🏠",
+            "I hope to surprise you even when we're old 🎁",
+            "May our love be an example for others 💖",
+            "I dream of morning coffee talks forever ☕",
+            "Let's make memories in every city we visit 🌆",
+            "I want to know all your stories 📖",
+            "May we always have each other's backs 🛡️",
+            "I hope to make you feel beautiful every day 🌸",
+            "Let's build a future we're both excited about 🚀",
+            "I dream of slow dancing in our living room 💫",
+            "May we never stop dating each other 💑",
+            "I want to be your forever person 💍",
+            "Let's make spontaneous decisions together 🎲",
+            "I hope to always be your first call ☎️",
+            "May we create traditions for our future family 👨‍👩‍👧",
+            "I dream of sunset walks together forever 🌅",
+            "Let's make every moment count ⏰",
+            "I want to celebrate you every single day 🎊",
+            "May our love story never end 📚",
+            "I hope to always choose adventure with you 🗺️",
+            "Let's build a life full of purpose and love 💝",
+            "I dream of learning to cook your favorite meals 🍳",
+            "May we always be honest with each other 💯",
+            "I want to be your shoulder through everything 🫂",
+            "Let's make a scrapbook of our journey 📔",
+            "I hope to always make you feel heard 👂",
+            "May we never stop growing together 🌱",
+            "I dream of building our dream life 🏗️",
+            "Let's make every anniversary better than the last 💕",
+            "I want to be your peace in chaos 🧘",
+            "May we always find joy in simple things 🌼",
+            "I hope to dance with you at every celebration 💃",
+            "Let's create a love that's timeless ⏳",
+            "I dream of weekend getaways forever ✈️",
+            "May we always respect each other's dreams 🎯",
+            "I want to build traditions only we understand 🎭",
+            "Let's make a home filled with laughter 😄",
+            "I hope to always be your biggest fan 📣"
+        ];
+
+        function generateWish() {
+            const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+            document.getElementById('wishText').textContent = randomWish;
+        }
+
+        // Calendar and notification system
+        let notificationsEnabled = false;
+
+        // Get day of year for consistent daily message
+        function getDayOfYear() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        // Get today's compliment (consistent per day)
+        function getTodaysCompliment() {
+            const dayIndex = getDayOfYear() % compliments.length;
+            return compliments[dayIndex];
+        }
+
+        // Enable notifications
+        async function enableNotifications() {
+            if ('Notification' in window && 'serviceWorker' in navigator) {
+                const permission = await Notification.requestPermission();
+                
+                if (permission === 'granted') {
+                    notificationsEnabled = true;
+                    updateNotificationStatus();
+                    scheduleDailyNotification();
+                    
+                    // Register background sync if available
+                    if (swRegistration && 'sync' in swRegistration) {
+                        try {
+                            await swRegistration.sync.register('daily-love-message');
+                            console.log('Background sync registered');
+                        } catch (err) {
+                            console.log('Background sync registration failed:', err);
+                        }
+                    }
+                    
+                    // Send test notification through service worker
+                    if (swRegistration && swRegistration.active) {
+                        swRegistration.active.postMessage({
+                            type: 'SEND_TEST_NOTIFICATION'
+                        });
+                    } else {
+                        // Fallback to regular notification
+                        new Notification('💝 Notifications Enabled!', {
+                            body: 'You\'ll receive a sweet message every morning at 6 AM! 💕',
+                            icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y="75" font-size="75"%3E💖%3C/text%3E%3C/svg%3E'
+                        });
+                    }
+                } else {
+                    alert('Please enable notifications in your browser settings to receive daily love messages! 💕');
+                }
+            } else {
+                alert('Your browser doesn\'t support notifications 😢');
+            }
+        }
+
+        // Update notification status display
+        function updateNotificationStatus() {
+            const statusDiv = document.getElementById('notificationStatus');
+            const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+            
+            if (notificationsEnabled || (Notification && Notification.permission === 'granted')) {
+                statusDiv.innerHTML = `
+                    <div class="status-card enabled">
+                        <span style="font-size: 3em;">✅</span>
+                        <p style="margin: 15px 0; font-size: 1.2em; color: #2d5016;">
+                            Daily reminders are active! You'll receive your love message every morning at 6:00 AM (Philippines Time) 💚
+                        </p>
+                        ${!isInstalled ? `
+                            <p style="font-size: 1em; color: #666; margin-top: 10px;">
+                                💡 <strong>Tip:</strong> Install this app for even better notifications! Look for the "Install App" button above.
+                            </p>
+                        ` : `
+                            <p style="font-size: 1em; color: #2d5016; margin-top: 10px;">
+                                ✨ App installed! You'll get notifications even when the app is closed! ✨
+                            </p>
+                        `}
+                        <p style="font-size: 0.9em; color: #888; margin-top: 10px;">
+                            ${isInstalled ? 'Keep your device online to receive notifications 📱' : 'Keep this tab open or install the app 📌'}
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Schedule daily notification at 6 AM Philippines time
+        function scheduleDailyNotification() {
+            const checkAndNotify = () => {
+                const now = new Date();
+                const phTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
+                const hours = phTime.getHours();
+                const minutes = phTime.getMinutes();
+                
+                // Check if it's 6:00 AM (within 1 minute window)
+                if (hours === 6 && minutes === 0) {
+                    const todaysMessage = getTodaysCompliment();
+                    
+                    if (Notification.permission === 'granted') {
+                        new Notification('💝 Good Morning Beautiful!', {
+                            body: todaysMessage,
+                            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💕</text></svg>',
+                            requireInteraction: true
+                        });
+                    }
+                    
+                    // Save to message history
+                    saveMessageToHistory(todaysMessage);
+                }
+            };
+
+            // Check every minute
+            setInterval(checkAndNotify, 60000);
+            checkAndNotify(); // Initial check
+        }
+
+        // Save message to localStorage
+        function saveMessageToHistory(message) {
+            const today = new Date().toLocaleDateString('en-US', { 
+                timeZone: 'Asia/Manila',
+                year: 'numeric',
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            let history = JSON.parse(localStorage.getItem('loveMessages') || '[]');
+            history.unshift({ date: today, message: message });
+            history = history.slice(0, 10); // Keep last 10 messages
+            localStorage.setItem('loveMessages', JSON.stringify(history));
+            
+            loadMessageHistory();
+        }
+
+        // Load message history
+        function loadMessageHistory() {
+            const history = JSON.parse(localStorage.getItem('loveMessages') || '[]');
+            const historyDiv = document.getElementById('messageHistory');
+            
+            if (history.length === 0) {
+                historyDiv.innerHTML = '<p style="text-align: center; color: #666; font-family: \'Caveat\', cursive; font-size: 1.3em;">Your message history will appear here 💌</p>';
+                return;
+            }
+            
+            historyDiv.innerHTML = history.map(item => `
+                <div class="message-history-item">
+                    <div class="message-date">📅 ${item.date}</div>
+                    <div class="message-text">${item.message}</div>
+                </div>
+            `).join('');
+        }
+
+        // Create calendar for current month
+        function createCalendar() {
+            const calendarDiv = document.getElementById('calendarDays');
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = now.getDate();
+            
+            const emojis = ['💕', '💖', '💗', '💝', '💓', '💞', '💟', '❤️', '🧡', '💛', '💚', '💙', '💜', '🤍', '🤎'];
+            
+            let html = '';
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div></div>';
+            }
+            
+            // Add days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = day === today;
+                const isPast = day < today;
+                const emoji = emojis[day % emojis.length];
+                const className = isToday ? 'calendar-day today' : isPast ? 'calendar-day past' : 'calendar-day';
+                
+                html += `
+                    <div class="${className}" title="Day ${day}">
+                        <div class="day-number">${day}</div>
+                        <div class="day-emoji">${emoji}</div>
+                    </div>
+                `;
+            }
+            
+            calendarDiv.innerHTML = html;
+        }
+
+        function generateCompliment() {
+            const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
+            document.getElementById('complimentText').textContent = randomCompliment;
+        }
+
+        function generateReason() {
+            const randomReason = reasons[Math.floor(Math.random() * reasons.length)];
+            document.getElementById('reasonText').textContent = randomReason;
+        }
+
+        // Confetti effect (kept for potential future use)
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ffc3d8', '#ff8fab', '#ffd700'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '-10px';
+                confetti.style.opacity = '1';
+                confetti.style.zIndex = '9999';
+                confetti.style.borderRadius = '50%';
+                document.body.appendChild(confetti);
+
+                const fall = confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 2000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+
+                fall.onfinish = () => confetti.remove();
+            }
+        }
+
+        // Initialize with first compliment
+        generateCompliment();
+    </script>
+</body>
+</html>
